@@ -16,7 +16,7 @@ Fábrica de Software · ADS · UNIALFA
 - **style.css** define o visual e adapta a interface a diferentes tamanhos.
 - **app.js** mantém os dados compartilhados, renderiza as telas e aplica as regras dos cinco cards.
 
-## Roteiro de demonstração (5–8 minutos)
+## Roteiro de demonstração 
 
 1. **Recepção → Pacientes.** Cadastre Ana Silva, 28 anos, CPF fictício `000.000.000-00`, telefone `(62) 00000-0000`, Rua Exemplo, 10, SUS. Repita o cadastro com o mesmo CPF para mostrar o bloqueio. Busque Ana pelo nome ou CPF e use **Editar** para mudar o endereço.
 2. **Recepção → Agendamentos.** Selecione Ana, Dr. Carlos Mendes, a data padrão (amanhã) e 14h. Clique em **Revisar e agendar** e confirme os dados. O status aparece como **Agendado**. Tente marcar Bruno com o mesmo médico, data e horário para demonstrar o conflito.
@@ -29,5 +29,3 @@ Fábrica de Software · ADS · UNIALFA
 - Dia 1 · Cadastro, agendamento, portal de consulta, fila e início do atendimento.
 - Dia 2 · Prontuário, histórico, prescrição, finalização e manutenção da agenda. O atendimento iniciado no Dia 1 já fica vinculado ao agendamento para a próxima etapa.
 - Dia 3 · Perfis, prescrições no portal e demais cards após receber os critérios completos.
-
-A troca de perfil é uma simulação didática. Use apenas dados fictícios. O CPF é tratado como identificador de 11 dígitos com máscara e unicidade. Os dados ficam no armazenamento do navegador quando disponível, com fallback para memória durante a sessão. Backend, banco, autenticação real e integrações externas estão fora do escopo.
