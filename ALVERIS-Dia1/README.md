@@ -5,8 +5,8 @@ Fábrica de Software · ADS · UNIALFA
 
 ## Como executar no Windows
 
-1. Clique com o botão direito em **ALVERIS-Dia1.zip** e escolha **Extrair Tudo**.
-2. Abra a pasta extraída e entre em **ALVERIS-Dia1**.
+1. Clique com o botão direito em **ALVERIS-.zip** e escolha **Extrair Tudo**.
+2. Abra a pasta extraída e entre em **ALVERIS**.
 3. Dê dois cliques em **index.html** para abrir no Edge, Chrome ou Firefox. Mantenha os arquivos na mesma pasta. A aplicação funciona offline, sem instalação.
 4. Para repetir a apresentação, clique em **Restaurar dados de exemplo** e confirme. Isso apaga as alterações da demonstração. Use o mesmo navegador e o mesmo arquivo extraído para reaproveitar os dados locais, quando o navegador permitir.
 
