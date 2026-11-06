@@ -1,5 +1,4 @@
-# ALVERIS — Protótipo do Dia 1
-
+# ALVERIS
 Sistema Integrado de Atendimento e Acompanhamento Hospitalar  
 Fábrica de Software · ADS · UNIALFA
 
