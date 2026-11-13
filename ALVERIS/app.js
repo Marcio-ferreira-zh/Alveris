@@ -1,13 +1,31 @@
+// O modo estrito ajuda a pegar erros, como usar uma variável sem declarar.
 'use strict';
 
+
+// Essa é a chave que o navegador usa pra guardar os dados da demonstração.
 const KEY = 'alveris-demo-v1';
+
+
+// Atalho para buscar um elemento da página pelo ID.
 const $ = id => document.getElementById(id);
+
+
+// Mantém só os números para comparar ou formatar CPF e telefone.
 const digits = value => value.replace(/\D/g, '');
+
+
+// Prepara o texto antes de colocar na página, pra ele aparecer como texto mesmo.
 const escape = value => String(value ?? '').replace(/[&<>"']/g, char =>
   ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'})[char]);
+
+
+// Limita o CPF a 11 dígitos e coloca pontos e hífen conforme a digitação.
 const cpfMask = value => digits(value).slice(0, 11)
   .replace(/^(\d{3})(\d)/, '$1.$2').replace(/^(\d{3}\.\d{3})(\d)/, '$1.$2')
   .replace(/(\.\d{3})(\d)/, '$1-$2');
+
+
+// Separa o DDD e aplica o hífen aos telefones de 10 ou 11 dígitos.
 const phoneMask = value => {
   const number = digits(value).slice(0, 11);
   if (number.length <= 2) return number;
@@ -15,22 +33,31 @@ const phoneMask = value => {
   return '(' + number.slice(0, 2) + ') ' + number.slice(2, prefix) +
     (number.length > prefix ? '-' + number.slice(prefix) : '');
 };
+
+
+// Soma ou subtrai dias a partir de hoje e devolve a data local no formato AAAA-MM-DD.
 function dateAfter(days) {
   const date = new Date();
   date.setDate(date.getDate() + days);
   return localDate(date);
 }
+
+
 // As datas dos exemplos são calculadas ao iniciar ou restaurar a demonstração.
 function nextMonthDate(day) {
   const today = new Date();
   return localDate(new Date(today.getFullYear(), today.getMonth() + 1, day));
 }
 
+
+// Formata a data usando o calendário local para preencher os campos do formulário.
 function localDate(date) {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'),
     String(date.getDate()).padStart(2, '0')].join('-');
 }
 
+
+// Prepara pacientes, médicos e consultas fictícias para a demonstração.
 function examples() {
   const past = [
     [1, 1, 7, 'Item Alfa'], [1, 2, 65, 'Item Beta'],
@@ -55,7 +82,8 @@ function examples() {
         timeline: ['Agendado', 'Confirmado', 'Chegou', 'Em atendimento', 'Atendido']
       })),
       {id: 11, patientId: 1, doctorId: 1, date: dateAfter(-18), time: '10:00', status: 'Cancelado',
-        timeline: ['Agendado', 'Confirmado', 'Cancelado'], cancelReason: 'Remarcação solicitada pelo paciente'}
+        timeline: ['Agendado', 'Confirmado', 'Cancelado'], cancelReason: 'Remarcação solicitada pelo paciente'},
+      {id: 12, patientId: 1, doctorId: 2, date: dateAfter(-24), time: '14:00', status: 'Não compareceu'}
     ],
     encounters: past.map(([patientId, doctorId, days, medicine], index) => ({
       id: index + 1, appointmentId: index + 3, patientId, doctorId, status: 'Finalizado',
@@ -67,6 +95,8 @@ function examples() {
   };
 }
 let storageAvailable = true;
+
+
 // O protótipo guarda os dados no navegador para reaproveitar entre os perfis.
 function load() {
   try {
@@ -78,6 +108,9 @@ function load() {
   return examples();
 }
 let data = load();
+
+
+// Salva no navegador as mudanças que acabaram de ser feitas.
 function save() {
   try {
     localStorage.setItem(KEY, JSON.stringify(data));
@@ -87,6 +120,8 @@ function save() {
   }
 }
 
+
+// Aqui ficam os menus que cada perfil pode acessar.
 const profiles = {
   reception: {name: 'Recepção', home: 'patients', pages: {
     patients: 'Pacientes', appointments: 'Novo agendamento', queue: 'Fila de espera',
@@ -108,10 +143,16 @@ const descriptions = {
   prescriptions: 'Consulte as prescrições emitidas para você.',
   audit: 'Consulte os eventos registrados para esta conta.'
 };
+
+
+// Configuração da sessão e da senha compartilhada pelas contas de demonstração.
 const TIMEOUT = 5 * 60 * 1000;
 const SESSION_KEY = 'alveris-demo-session';
 const PASSWORD = 'alveris';
 let session = readSession();
+
+
+// Estado da tela, dos filtros e dos formulários durante a navegação.
 let agendaFilters = {date: '', doctorId: '', status: ''};
 let agendaEdit = null;
 let role;
@@ -119,10 +160,16 @@ let page;
 let patientId;
 let doctorId;
 let editId = null;
+
+
+// Atalhos para encontrar pessoas pelos IDs que ligam os registros.
 const patient = id => data.patients.find(item => item.id === id);
 const doctor = id => data.doctors.find(item => item.id === id);
 const nextId = items => Math.max(0, ...items.map(item => item.id)) + 1;
 const dateLabel = date => date.split('-').reverse().join('/');
+
+
+// Peças pequenas de HTML que aparecem em várias telas.
 const badge = status => '<span class="badge">' + escape(status) + '</span>';
 const action = (type, id, label, disabled = false) =>
   '<button type="button" data-action="' + type + '" data-id="' + id + '"' +
@@ -130,6 +177,9 @@ const action = (type, id, label, disabled = false) =>
 const options = (items, selected) => items.map(item =>
   '<option value="' + item.id + '"' + (item.id === selected ? ' selected' : '') + '>' +
   escape(item.name) + '</option>').join('');
+
+
+// Monta a tabela a partir dos títulos das colunas e das linhas recebidas.
 function table(headers, rows, empty) {
   if (!rows.length) return '<p class="muted">' + empty + '</p>';
   return '<div class="scroll" tabindex="0" role="region" aria-label="Tabela de resultados"><table><thead><tr>' +
@@ -137,11 +187,17 @@ function table(headers, rows, empty) {
     rows.map(row => '<tr>' + row.map(cell => '<td>' + cell + '</td>').join('') + '</tr>').join('') +
     '</tbody></table></div>';
 }
+
+
+// Mostra o resultado da ação acima do conteúdo da tela.
 function message(text, error = false) {
   $('message').textContent = text + (storageAvailable ? '' :
     ' O armazenamento local está indisponível. Os dados duram até fechar ou recarregar a página.');
   $('message').className = error ? 'error' : '';
 }
+
+
+// Monta de novo a tela atual com os dados atualizados.
 function render() {
   const profile = profiles[role];
   $('title').textContent = profile.pages[page];
@@ -149,6 +205,9 @@ function render() {
   $('content').innerHTML = views[page]();
   if (page === 'patients') renderPatientList();
 }
+
+
+// Monta o formulário da recepção. Na edição, usa os dados do paciente escolhido.
 function patientsView() {
   const entry = patient(editId);
   const field = (label, name, attributes = '', value = entry?.[name]) =>
@@ -172,24 +231,31 @@ function patientsView() {
   <h2 id="appointment-history-title"></h2><div id="appointment-history-body"></div>
   <form method="dialog"><button>Fechar</button></form></dialog>`;
 }
+
+
+// Filtra a lista por nome ou CPF conforme a recepção digita.
 function renderPatientList() {
   const normalize = value => value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const search = normalize($('search').value.trim());
   const cpfQuery = /^[\d.\-\s]+$/.test(search) ? digits(search) : '';
   const rows = data.patients.filter(item => normalize(item.name).includes(search) ||
     (cpfQuery && item.cpf.includes(cpfQuery))).map(item =>
-    [escape(item.name), cpfMask(item.cpf), item.age, phoneMask(item.phone),
+    [action('patient-history', item.id, escape(item.name)), cpfMask(item.cpf), item.age, phoneMask(item.phone),
       escape(item.plan), '<div class="actions">' + action('edit', item.id, 'Editar') +
-        action('patient-history', item.id, 'Ver histórico') + '</div>']);
+        action('patient-history', item.id, 'Ver agendamentos') + '</div>']);
   $('patient-list').innerHTML = table(['Paciente', 'CPF fictício', 'Idade', 'Telefone', 'Cobertura', 'Ação'],
     rows, 'Nenhum paciente encontrado.');
 }
+
+
 // A agenda mostra os horários futuros. O histórico é consultado por paciente.
 function isUpcoming(item) {
-  return !['Finalizado', 'Cancelado'].includes(item.status) &&
+  return !['Finalizado', 'Cancelado', 'Não compareceu'].includes(item.status) &&
     new Date(item.date + 'T' + item.time) >= new Date();
 }
 
+
+// Recupera as etapas da consulta, inclusive para registros salvos em versões antigas.
 function appointmentTimeline(item) {
   if (item.timeline) return item.timeline;
   // Os dados de versões anteriores guardavam só o estado atual e a chegada.
@@ -202,29 +268,66 @@ function appointmentTimeline(item) {
   }
 }
 
+
+// Acrescenta a nova etapa ao histórico da consulta antes de mudar o status atual.
 function recordAppointmentStep(item, step) {
   item.timeline = [...appointmentTimeline(item), step];
 }
 
-function appointmentHistory(id) {
-  const items = data.appointments.filter(item => item.patientId === id && !isUpcoming(item))
-    .sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
-  return table(['Data e hora', 'Médico', 'Andamento'], items.map(item => [
-    dateLabel(item.date) + ' · ' + item.time, escape(doctor(item.doctorId).name),
-    escape(appointmentTimeline(item).join(' → ')) +
-      (item.cancelReason ? '<br><small>Motivo: ' + escape(item.cancelReason) + '</small>' : '')
-  ]), 'Nenhum agendamento anterior registrado.');
+
+// A recepção e o portal usam a mesma lista, cada um para o paciente certo.
+function patientAppointments(id, canMarkAbsence = false) {
+  const items = data.appointments.filter(item => item.patientId === id);
+  const compare = (a, b) => (a.date + a.time).localeCompare(b.date + b.time);
+  const upcoming = items.filter(isUpcoming).sort(compare);
+  const history = items.filter(item => !isUpcoming(item)).sort((a, b) => compare(b, a));
+  const columns = ['Data e hora', 'Médico', 'Situação', 'Motivo do cancelamento'];
+  if (canMarkAbsence) columns.push('Ações');
+
+  function list(records, empty) {
+    return table(columns, records.map(item => {
+      const absenceAllowed = canMarkAbsence && editableAppointment(item) && !isUpcoming(item);
+      const status = item.status === 'Finalizado' ? 'Atendido' : item.status;
+      const row = [dateLabel(item.date) + ' · ' + item.time, escape(doctor(item.doctorId).name),
+        badge(status), item.status === 'Cancelado' ? escape(item.cancelReason || 'Não informado') : '—'];
+      if (canMarkAbsence) row.push(absenceAllowed ? action('mark-absence', item.id, 'Marcar ausência') : '—');
+      return row;
+    }), empty);
+  }
+
+  return '<section class="panel"><h2>Próximos agendamentos</h2>' +
+    list(upcoming, 'Nenhum horário futuro marcado.') +
+    '</section><section class="panel"><h2>Histórico de agendamentos</h2>' +
+    list(history, 'Nenhum agendamento anterior ou encerrado.') + '</section>';
 }
 
+
+// Ao clicar no paciente, a recepção vê todos os agendamentos dele.
 function showPatientHistory(id) {
   const entry = patient(id);
-  if (!entry) return;
+  if (role !== 'reception' || !entry) return;
   const dialog = $('appointment-history');
-  $('appointment-history-title').textContent = 'Histórico de ' + entry.name;
-  $('appointment-history-body').innerHTML = appointmentHistory(id);
+  $('appointment-history-title').textContent = 'Agendamentos de ' + entry.name;
+  $('appointment-history-body').innerHTML = patientAppointments(id, true);
   dialog.showModal();
 }
 
+
+// A recepção confirma a ausência depois que o horário passa.
+function markAbsence(id) {
+  const item = data.appointments.find(entry => entry.id === id);
+  if (role !== 'reception' || !item || !editableAppointment(item) || isUpcoming(item)) return;
+  if (!window.confirm('Registrar que ' + patient(item.patientId).name + ' não compareceu?')) return;
+  recordAppointmentStep(item, 'Não compareceu');
+  item.status = 'Não compareceu';
+  receptionLog('Ausência registrada', item.patientId);
+  $('appointment-history-body').innerHTML = patientAppointments(item.patientId, true);
+  $('appointment-history-body').querySelector('h2')?.setAttribute('tabindex', '-1');
+  $('appointment-history-body').querySelector('h2')?.focus();
+}
+
+
+// Prepara as linhas da agenda. As ações administrativas aparecem na visão da recepção.
 function appointmentRows(items, reception) {
   return items.map(item => {
     const row = [dateLabel(item.date) + ' · ' + item.time, escape(doctor(item.doctorId).name), badge(item.status)];
@@ -236,6 +339,9 @@ function appointmentRows(items, reception) {
     return row;
   });
 }
+
+
+// Junta o formulário de agendamento com a lista das próximas consultas.
 function appointmentsView() {
   return `<section class="panel"><h2>Novo agendamento</h2><form id="appointment-form"><div class="fields">
   <label>Paciente<select name="patientId" required><option value="">Selecione</option>${options(data.patients)}</select></label>
@@ -246,6 +352,9 @@ function appointmentsView() {
   <section class="panel"><h2>Agendamentos registrados</h2>
   ${table(['Paciente', 'Data e hora', 'Médico', 'Status', 'Ação'], appointmentRows(data.appointments.filter(isUpcoming), true), 'Nenhum agendamento.')}</section>`;
 }
+
+
+// Usa o ID da sessão para exibir os dados e os agendamentos do próprio paciente.
 function patientView() {
   const entry = patient(patientId);
   if (page === 'details') {
@@ -255,17 +364,17 @@ function patientView() {
       fields.map(([label, value]) => '<div><dt>' + label + '</dt><dd>' + escape(value) + '</dd></div>').join('') +
       '</dl></section>';
   }
-  const items = data.appointments.filter(item => item.patientId === patientId &&
-    isUpcoming(item))
-    .sort((first, second) => (first.date + first.time).localeCompare(second.date + second.time));
-  return '<section class="panel"><h2>Próximas consultas</h2>' +
-    table(['Data e hora', 'Médico', 'Status'], appointmentRows(items, false),
-      'Você não tem consultas futuras agendadas.') + '</section>' +
-    '<section class="panel"><h2>Histórico de agendamentos</h2>' + appointmentHistory(patientId) + '</section>';
+  return patientAppointments(patientId);
 }
+
+
+// Consultas em espera e consultas que já foram iniciadas.
 const waiting = () => data.appointments.filter(item => item.status === 'Aguardando')
   .sort((first, second) => first.arrivedAt - second.arrivedAt);
 const activeFor = id => data.appointments.find(item => item.doctorId === id && item.status === 'Em Atendimento');
+
+
+// Mostra quem chegou, a posição na fila e as opções de encaminhamento.
 function receptionQueue() {
   const rows = waiting().map((item, index) => [
     index + 1, escape(patient(item.patientId).name), escape(doctor(item.doctorId).name),
@@ -281,9 +390,15 @@ function receptionQueue() {
       [escape(patient(item.patientId).name), ...appointmentRows([item], false)[0]]),
     'Nenhuma consulta em andamento.') + '</section>';
 }
+
+
+// Calcula há quantos minutos o paciente está esperando desde a chegada.
 function waitTime(start) {
   return Math.max(0, Math.floor((Date.now() - Number(start)) / 60000)) + ' min';
 }
+
+
+// Mostra a fila do médico da sessão e o atendimento que ele já iniciou.
 function doctorQueue() {
   const active = activeFor(doctorId);
   const current = active && patient(active.patientId);
@@ -300,10 +415,15 @@ function doctorQueue() {
     table(['Paciente', 'Idade', 'Cobertura', 'Horário', 'Situação', 'Ação'], rows,
       'Nenhum paciente aguardando para este médico.') + '</section>';
 }
+
+
+// Relaciona o nome da tela à função que monta seu conteúdo.
 const views = {patients: patientsView, appointments: appointmentsView, queue: receptionQueue,
   upcoming: patientView, details: patientView, doctorQueue, chart: chartView, manage: agendaView,
   prescriptions: prescriptionsView, audit: auditView};
 
+
+// Valida os campos do cadastro e impede que dois pacientes tenham o mesmo CPF.
 function savePatient(form) {
   const values = Object.fromEntries(new FormData(form));
   const address = values.address.trim();
@@ -325,6 +445,9 @@ function savePatient(form) {
   receptionLog('Paciente cadastrado', data.patients.at(-1).id);
   commit('Paciente cadastrado.');
 }
+
+
+// Confere o horário e os conflitos antes de criar o agendamento.
 function saveAppointment(form) {
   const values = Object.fromEntries(new FormData(form));
   const doctorId = Number(values.doctorId);
@@ -339,10 +462,12 @@ function saveAppointment(form) {
   receptionLog('Consulta agendada', patientId);
   commit('Consulta agendada.');
 }
+
+
 // Usamos a mesma regra para criar e reagendar consultas.
 function appointmentConflict({doctorId, patientId, date, time, id}) {
   const sameSlot = data.appointments.filter(item => item.id !== id && item.date === date &&
-    item.time === time && !['Cancelado', 'Finalizado'].includes(item.status));
+    item.time === time && !['Cancelado', 'Finalizado', 'Não compareceu'].includes(item.status));
   if (sameSlot.some(item => item.doctorId === doctorId)) {
     return 'Esse médico já tem um agendamento nessa data e horário.';
   }
@@ -352,11 +477,16 @@ function appointmentConflict({doctorId, patientId, date, time, id}) {
   return '';
 }
 
+
+// Salva a mudança, atualiza a tela e mostra a mensagem da operação.
 function commit(text) {
   save();
   render();
   message(text);
 }
+
+
+// Aqui a consulta muda de situação: confirmação, chegada, fila e atendimento.
 function appointmentAction(type, id) {
   const item = data.appointments.find(entry => entry.id === id);
   if (!item) return;
@@ -388,6 +518,8 @@ function appointmentAction(type, id) {
   }
 }
 
+
+// Reage à digitação para filtrar listas e aplicar máscaras.
 $('content').addEventListener('input', event => {
   if (!checkSession()) return;
   if (event.target.id === 'prescription-search') updatePrescriptions();
@@ -395,6 +527,9 @@ $('content').addEventListener('input', event => {
   if (event.target.name === 'cpf') event.target.value = cpfMask(event.target.value);
   if (event.target.name === 'phone') event.target.value = phoneMask(event.target.value);
 });
+
+
+// Atualiza a tela quando um filtro selecionado muda.
 $('content').addEventListener('change', event => {
   if (!checkSession()) return;
   if (event.target.id === 'prescription-period') return updatePrescriptions();
@@ -408,6 +543,9 @@ $('content').addEventListener('change', event => {
   }
 
 });
+
+
+// Envia cada formulário para a função responsável pela operação.
 $('content').addEventListener('submit', event => {
   if (event.target.id === 'login-form' || event.target.method === 'dialog') return;
   event.preventDefault();
@@ -418,11 +556,15 @@ $('content').addEventListener('submit', event => {
   if (page === 'patients' && event.target.id === 'patient-form') savePatient(event.target);
   if (page === 'appointments' && event.target.id === 'appointment-form') saveAppointment(event.target);
 });
+
+
+// Identifica o botão clicado e chama a ação da tela atual.
 $('content').addEventListener('click', event => {
   const {action: type, id} = event.target.dataset;
   if (!type || !checkSession()) return;
   if (page === 'prescriptions' && type === 'prescription-detail') return showPrescription(Number(id));
   if (page === 'chart' && type === 'history-detail') return logHistory(event.target, Number(id));
+  if (page === 'patients' && type === 'mark-absence') return markAbsence(Number(id));
   if (page === 'patients' && type === 'patient-history') return showPatientHistory(Number(id));
   if (page === 'manage') return manageAction(type, Number(id));
   if (page === 'patients' && ['edit', 'cancel-edit'].includes(type)) {
@@ -434,6 +576,9 @@ $('content').addEventListener('click', event => {
   }
   if (['appointments', 'queue', 'doctorQueue'].includes(page)) appointmentAction(type, Number(id));
 });
+
+
+// Recarrega os exemplos após a confirmação da recepção.
 $('reset').addEventListener('click', () => {
   if (!checkSession() || role !== 'reception') return;
   if (!window.confirm('Restaurar os exemplos? As alterações e a trilha local serão apagadas.')) return;
@@ -446,18 +591,25 @@ setInterval(() => {
     element.textContent = waitTime(element.dataset.arrived);
   });
 }, 15000);
+
+
+// Encontra o prontuário aberto pelo médico a partir do agendamento em atendimento.
 function currentEncounter() {
   const appointment = activeFor(doctorId);
   return appointment && data.encounters.find(item =>
     item.appointmentId === appointment.id && item.doctorId === doctorId && item.status === 'Em Atendimento');
 }
 
+
+// Monta a tabela de medicamentos usada no prontuário e no portal.
 function prescriptionList(items) {
   return table(['Medicamento', 'Dosagem', 'Frequência', 'Duração'],
     items.map(item => [item.medicine, item.dose, item.frequency, item.duration].map(escape)),
     'Nenhum item registrado.');
 }
 
+
+// Monta o prontuário e libera o histórico do paciente enquanto a consulta está aberta.
 function chartView() {
   const encounter = currentEncounter();
   if (!encounter) return '<section class="panel"><h2>Sem consulta aberta</h2><p>Inicie uma consulta em Minha fila para abrir o histórico do paciente.</p></section>';
@@ -492,6 +644,8 @@ function chartView() {
     <button name="operation" value="finish">Finalizar atendimento</button></section></form>` + history;
 }
 
+
+// Valida os campos, inclui itens na prescrição e fecha o atendimento após a confirmação.
 function saveChart(form, operation) {
   const encounter = currentEncounter();
   if (role !== 'doctor' || !encounter || !['add', 'finish'].includes(operation)) return;
@@ -525,7 +679,12 @@ function saveChart(form, operation) {
   commit(operation === 'add' ? 'Item incluído na prescrição provisória.' : 'Atendimento finalizado.');
 }
 
+
+// Só os horários agendados ou confirmados podem ser alterados na agenda.
 const editableAppointment = item => ['Agendado', 'Confirmado'].includes(item.status);
+
+
+// Aplica os filtros e mostra as ações disponíveis para cada consulta.
 function agendaView() {
   const filters = agendaFilters;
   const statuses = ['Agendado', 'Confirmado', 'Aguardando', 'Em Atendimento'];
@@ -553,6 +712,8 @@ function agendaView() {
     ]), 'Nenhuma consulta para os filtros selecionados.')}</section>`;
 }
 
+
+// Abre a edição do horário ou registra o cancelamento com o motivo informado.
 function manageAction(type, id) {
   const item = data.appointments.find(entry => entry.id === id);
   if (role !== 'reception' || !item || !editableAppointment(item)) return;
@@ -576,6 +737,8 @@ function manageAction(type, id) {
   }
 }
 
+
+// Confere o novo horário e registra a mudança no histórico da consulta.
 function reschedule(form) {
   const item = data.appointments.find(entry => entry.id === agendaEdit);
   if (role !== 'reception' || !item || !editableAppointment(item)) return;
@@ -591,6 +754,8 @@ function reschedule(form) {
   commit('Horário atualizado.');
 }
 
+
+// Recupera a sessão ao recarregar a página na mesma aba.
 function readSession() {
   try {
     const saved = JSON.parse(sessionStorage.getItem(SESSION_KEY));
@@ -600,6 +765,8 @@ function readSession() {
   }
 }
 
+
+// Guarda o login e o horário da última atividade na aba.
 function storeSession() {
   try {
     if (session) sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
@@ -609,6 +776,8 @@ function storeSession() {
   }
 }
 
+
+// Gera as contas de demonstração a partir dos médicos e pacientes cadastrados.
 function accounts() {
   return [
     {login: 'recepcao', role: 'reception', name: 'Recepção ALVERIS'},
@@ -618,6 +787,7 @@ function accounts() {
       role: 'patient', personId: item.id, name: item.name}))
   ];
 }
+
 
 // Os logs registram a ação e sua referência, sem copiar o conteúdo clínico.
 function audit(event, resource = '', alert = false, category = '') {
@@ -629,16 +799,22 @@ function audit(event, resource = '', alert = false, category = '') {
   save();
 }
 
+
+// Lê a parte do endereço depois do # para identificar a tela solicitada.
 function route() {
   return window.location.hash.slice(1);
 }
 
+
+// Atualiza o endereço e guarda a tela selecionada.
 function setRoute(destination) {
   const hash = '#' + destination;
   if (window.location.hash !== hash) history.replaceState(null, '', hash);
   page = destination;
 }
 
+
+// Encerra a sessão quando o tempo de inatividade chega ao limite.
 function checkSession() {
   if (!session) return false;
   if (Date.now() - session.lastActivity >= TIMEOUT) {
@@ -649,6 +825,8 @@ function checkSession() {
   return true;
 }
 
+
+// Limpa a sessão e volta para o login.
 function endSession(text) {
   session = null;
   storeSession();
@@ -656,6 +834,8 @@ function endSession(text) {
   message(text);
 }
 
+
+// Monta o formulário de login e os atalhos das contas fictícias.
 function loginView() {
   return `<section class="panel login-form"><h2>Acesse sua conta</h2>
     <form id="login-form" autocomplete="off">
@@ -669,6 +849,7 @@ function loginView() {
       data-demo-login="${escape(account.login)}"><strong>${escape(account.name)}</strong>
       <small>${profiles[account.role].name} · ${escape(account.login)}</small></button>`).join('')}</div></section>`;
 }
+
 
 // A sessão identifica o usuário. Cada perfil tem sua própria lista de telas.
 function navigate(destination) {
@@ -719,11 +900,15 @@ function navigate(destination) {
   render();
 }
 
+
+// Usa apenas nomes conhecidos de telas ao registrar uma tentativa de acesso.
 function safeRoute(destination) {
   return Object.values(profiles).some(profile => Object.hasOwn(profile.pages, destination)) ?
     destination : 'desconhecida';
 }
 
+
+// Confere se a receita pertence ao paciente da sessão antes de abrir os detalhes.
 function showPrescription(id) {
   const record = patientPrescriptions().find(item => item.id === id);
   if (!record) {
@@ -737,12 +922,16 @@ function showPrescription(id) {
   $('prescription-dialog').showModal();
 }
 
+
+// Registra a abertura dos detalhes de uma consulta anterior.
 function logHistory(summary, id) {
   if (summary.parentElement.open) return;
   const record = data.encounters.find(item => item.id === id && item.patientId === currentEncounter()?.patientId && item.status === 'Finalizado');
   audit(record ? 'Histórico clínico visualizado' : 'Acesso negado', 'Atendimento #' + id, !record);
 }
 
+
+// Mostra apenas prescrições finalizadas e vinculadas ao paciente da sessão.
 function patientPrescriptions() {
   if (role !== 'patient') return [];
   return data.encounters.filter(item => item.patientId === patientId && item.status === 'Finalizado' &&
@@ -750,10 +939,14 @@ function patientPrescriptions() {
     .sort((a, b) => issuedAt(b) - issuedAt(a));
 }
 
+
+// Usa a data da finalização da receita, com a data do atendimento como alternativa.
 const issuedAt = record => record.finishedAt ?? record.startedAt;
 const prescriptionDate = record => new Date(issuedAt(record)).toLocaleDateString('pt-BR');
 const searchable = value => value.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/\p{Diacritic}/gu, '');
 
+
+// Cruza o que foi digitado na busca com o período escolhido.
 function prescriptionResults(query = '', period = 'all') {
   const since = new Date();
   since.setHours(0, 0, 0, 0);
@@ -780,6 +973,8 @@ function prescriptionResults(query = '', period = 'all') {
     ${action('prescription-detail', record.id, 'Ver detalhes')}</article>`).join('')}</div>`;
 }
 
+
+// Monta os filtros, a lista de receitas e a janela de detalhes.
 function prescriptionsView() {
   return `<section class="panel fields">
     <label>Buscar por médico, medicamento ou data<input id="prescription-search" type="search" placeholder="Ex.: Item Alfa"></label>
@@ -791,19 +986,27 @@ function prescriptionsView() {
     <form method="dialog" class="actions"><button>Fechar</button></form></dialog>`;
 }
 
+
+// Atualiza os resultados dos filtros sem recarregar a página.
 function updatePrescriptions() {
   $('prescription-results').innerHTML = prescriptionResults($('prescription-search').value, $('prescription-period').value);
 }
 
+
+// Registra a ação administrativa com o nome do paciente.
 function receptionLog(event, id) {
   audit(event, patient(id).name, false, 'reception');
 }
 
+
+// Mostra o erro do prontuário e registra o paciente na atividade do médico.
 function chartError(encounter, reason) {
   audit(reason, patient(encounter.patientId).name, true, 'chart-error');
   message(reason, true);
 }
 
+
+// Cada perfil vê só os registros relevantes na atividade da conta.
 function auditView() {
   const logs = (data.audit ?? []).filter(item => {
     if (item.login !== session.login) return false;
@@ -811,12 +1014,14 @@ function auditView() {
     return item.category === 'reception' ||
       ['Login bem-sucedido', 'Saída da conta', 'Sessão expirada'].includes(item.event);
   }).reverse();
-  return '<section class="panel">' + table(['ID', 'Data e hora', 'Perfil', 'Evento', 'Paciente ou referência', 'Sinalização'],
+  return '<section class="panel">' + table(['ID', 'Data e hora', 'Perfil', 'Evento', 'Paciente ou referência'],
     logs.map(item => [item.id, new Date(item.when).toLocaleString('pt-BR'), escape(item.profile),
-      escape(item.event), escape(item.resource || '—'), item.alert ? '<strong class="alert">Alerta</strong>' : '—']),
+      escape(item.event), escape(item.resource || '—')]),
     'Ainda não há eventos registrados para esta conta.') + '</section>';
 }
 
+
+// Preenche o usuário ao escolher uma conta de demonstração.
 $('content').addEventListener('click', event => {
   const button = event.target.closest('[data-demo-login]');
   if (!button || session) return;
@@ -824,6 +1029,8 @@ $('content').addEventListener('click', event => {
   $('login-form').elements.password.focus();
 });
 
+
+// Confere o usuário e a senha e abre a tela inicial do perfil.
 $('content').addEventListener('submit', event => {
   if (event.target.id !== 'login-form' || session) return;
   event.preventDefault();
@@ -839,12 +1046,16 @@ $('content').addEventListener('submit', event => {
   navigate(profiles[account.role].home);
 });
 
+
+// Registra a saída do usuário antes de limpar a sessão.
 $('logout').addEventListener('click', () => {
   if (!checkSession()) return;
   audit('Saída da conta');
   endSession('Sessão encerrada.');
 });
 
+
+// Atualiza a página ao navegar pelos links e reinicia o prazo da sessão com a interação.
 window.addEventListener('hashchange', () => navigate(route()));
 for (const event of ['pointerdown', 'keydown', 'input']) {
   document.addEventListener(event, () => {

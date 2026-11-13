@@ -1,3 +1,6 @@
+
+
+/* Regras básicas da página, do cabeçalho e das áreas de conteúdo. */
 * { box-sizing: border-box; }
 :root { font-family: system-ui, sans-serif; color: #182e42; background: #eff5f7; }
 body { margin: 0; }
@@ -15,6 +18,9 @@ main { padding: clamp(1rem, 3vw, 2.5rem); }
 h1 { margin: .25rem 0; font-size: clamp(1.65rem, 3vw, 2.4rem); }
 h2 { margin-top: 0; font-size: 1.12rem; }
 .muted, footer { color: #486075; }
+
+
+/* Estilos dos menus e dos controles dos formulários. */
 nav { display: flex; flex-wrap: wrap; gap: .45rem; }
 aside nav { display: grid; }
 button, input, select { font: inherit; }
@@ -25,6 +31,9 @@ button:hover:not(:disabled) { filter: brightness(.92); }
 button:disabled { opacity: .55; cursor: default; }
 :focus-visible { outline: 3px solid #2275c1; outline-offset: 2px; }
 .reset { margin-top: 1.5rem; font-size: .85rem; }
+
+
+/* Painéis, campos e tabelas usados nas telas. */
 .panel { background: white; border: 1px solid #d4e3ea; padding: clamp(.8rem, 2vw, 1.35rem); border-radius: .85rem; margin: 1rem 0; }
 .fields, dl { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: .85rem; }
 label { display: grid; gap: .25rem; font-weight: 650; }
@@ -40,6 +49,9 @@ dt { font-weight: 700; }
 #message:empty { display: none; }
 #message { padding: .7rem; border-radius: .5rem; background: #dff4ef; }
 #message.error { color: #872418; background: #fdebe6; }
+
+
+/* Organiza a navegação e o conteúdo em telas menores. */
 @media(max-width: 700px) {
   .layout { grid-template-columns: 1fr; }
   aside { border-right: 0; border-bottom: 1px solid #d2e2e8; }
@@ -86,6 +98,8 @@ td small { color: #486075; }
   #modules { grid-template-columns: 1fr; }
 }
 
+
+/* Estilos da sessão, do login e das telas que dependem do perfil. */
 [hidden] { display: none !important; }
 .session-bar { display: flex; align-items: center; gap: 1rem; }
 .session-bar span { font-weight: 650; }

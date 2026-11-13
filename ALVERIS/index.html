@@ -8,13 +8,25 @@
 <script defer src="app.js"></script>
 </head>
 <body>
+
+
+<!-- Cabeçalho com a identificação do sistema e a opção de sair. -->
 <header><div class="brand"><span class="logo" aria-hidden="true">✚</span><div><strong>ALVERIS</strong><small>Sistema integrado de atendimento hospitalar</small></div></div><div class="session-bar" id="session-bar" hidden><span id="identity"></span><button class="secondary" id="logout">Sair</button></div></header>
 <div class="shell">
 <div class="layout" id="layout">
+
+
+<!-- O JavaScript preenche o menu com as telas permitidas para o perfil. -->
 <aside id="sidebar" hidden><p class="eyebrow" id="profile"></p><nav id="tabs" aria-label="Telas"></nav><button class="secondary reset" id="reset" hidden>Restaurar dados de exemplo</button></aside>
+
+
+<!-- O JavaScript troca o conteúdo desta área quando o usuário navega. -->
 <main><p class="eyebrow" id="section"></p><h1 id="title"></h1><p class="muted" id="description"></p><p id="message" role="status" aria-live="polite"></p><div id="content"></div></main>
 </div>
 </div>
+
+
+<!-- Identificação do projeto acadêmico. -->
 <footer>Fábrica de Software · Dados fictícios para demonstração</footer>
 </body>
 </html>
