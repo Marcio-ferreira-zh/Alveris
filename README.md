@@ -11,9 +11,9 @@ Fábrica de Software · ADS · UNIALFA
 
 ## Arquivos
 
-- **index.html** organiza a página e a navegação.
-- **style.css** define o visual e adapta a interface a diferentes tamanhos.
-- **app.js** mantém os dados compartilhados, renderiza as telas e aplica as regras de agendamento, atendimento e acesso por perfil.
+- **index.html** 
+- **style.css**
+- **app.js** 
 
 ## Roteiro de demonstração
 
