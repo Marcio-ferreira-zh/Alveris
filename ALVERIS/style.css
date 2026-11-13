@@ -85,3 +85,25 @@ td small { color: #486075; }
 @media(max-width: 560px) {
   #modules { grid-template-columns: 1fr; }
 }
+
+[hidden] { display: none !important; }
+.session-bar { display: flex; align-items: center; gap: 1rem; }
+.session-bar span { font-weight: 650; }
+.layout.signed-out { display: block; max-width: 780px; min-height: auto; }
+#tabs { display: grid; width: 100%; padding: 0; gap: .35rem; background: transparent; }
+#tabs a { color: var(--ink); text-decoration: none; padding: .65rem .75rem; border-radius: .55rem; }
+#tabs a:hover { background: #f1f7fc; }
+#tabs a[aria-current="page"] { background: var(--navy); color: #fff; font-weight: 700; }
+.account-grid, .prescription-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: .7rem; }
+.account-grid button { text-align: left; }
+.account-grid small, .prescription-card small { display: block; margin-top: .2rem; color: #486075; }
+.prescription-card { margin: 0; }
+.prescription-card ul { padding-left: 1.2rem; }
+.prescription-card li + li { margin-top: .5rem; }
+.alert { color: #872418; }
+dialog { width: min(94vw, 700px); padding: 1.4rem; border: 1px solid var(--line); border-radius: 1rem; color: var(--ink); }
+dialog::backdrop { background: #10243a88; }
+dialog .actions { margin-top: 1rem; }
+@media(max-width: 700px) {
+  #tabs { display: flex; flex-wrap: wrap; }
+}

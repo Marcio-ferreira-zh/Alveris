@@ -4,27 +4,31 @@ Fábrica de Software · ADS · UNIALFA
 
 ## Como executar no Windows
 
-1. Clique com o botão direito em **ALVERIS-.zip** e escolha **Extrair Tudo**.
-2. Abra a pasta extraída e entre em **ALVERIS**.
+1. Clique com o botão direito em **ALVERIS.zip** e escolha **Extrair Tudo**.
+2. Abra a pasta **Alveris-main** e entre em **ALVERIS**.
 3. Dê dois cliques em **index.html** para abrir no Edge, Chrome ou Firefox. Mantenha os arquivos na mesma pasta. A aplicação funciona offline, sem instalação.
-4. Para repetir a apresentação, clique em **Restaurar dados de exemplo** e confirme. Isso apaga as alterações da demonstração. Use o mesmo navegador e o mesmo arquivo extraído para reaproveitar os dados locais, quando o navegador permitir.
+4. Para repetir a apresentação com exemplos atualizados, entre como **recepcao**, clique em **Restaurar dados de exemplo** e confirme. Isso apaga as alterações da demonstração. Use o mesmo navegador e o mesmo arquivo extraído para reaproveitar os dados locais, quando disponíveis.
 
 ## Arquivos
 
 - **index.html** organiza a página e a navegação.
 - **style.css** define o visual e adapta a interface a diferentes tamanhos.
-- **app.js** mantém os dados compartilhados, renderiza as telas e aplica as regras dos cinco cards.
+- **app.js** mantém os dados compartilhados, renderiza as telas e aplica as regras de agendamento, atendimento e acesso por perfil.
 
-## Roteiro de demonstração 
+## Roteiro de demonstração
 
-1. **Recepção → Pacientes.** Cadastre Ana Silva, 28 anos, CPF fictício `000.000.000-00`, telefone `(62) 00000-0000`, Rua Exemplo, 10, SUS. Repita o cadastro com o mesmo CPF para mostrar o bloqueio. Busque Ana pelo nome ou CPF e use **Editar** para mudar o endereço.
-2. **Recepção → Agendamentos.** Selecione Ana, Dr. Carlos Mendes, a data padrão (amanhã) e 14h. Clique em **Revisar e agendar** e confirme os dados. O status aparece como **Agendado**. Tente marcar Bruno com o mesmo médico, data e horário para demonstrar o conflito.
-3. **Portal do Paciente → Agendamentos.** Selecione Ana e confira a consulta. Em **Meus dados**, confira o endereço atualizado. Em **Agendamentos**, selecione Rui para mostrar o aviso de agenda vazia.
-4. **Recepção → Agendamentos.** Na linha de Ana, clique em **Confirmar agendamento** e depois em **Confirmar chegada**. Na fila, mostre posição, médico, horário e tempo de espera. Clique em **Chamar / Encaminhar**. A ação passa a mostrar **Encaminhado**. Para facilitar o ensaio, a chegada simulada pode ser registrada antes do dia marcado.
-5. **Painel Médico.** Alterne entre Dra. Marina e Dr. Carlos para mostrar a separação das filas. Com Dr. Carlos, clique em **Iniciar atendimento** na linha de Ana. Confira nome, idade e cobertura no painel. Volte à Recepção e mostre **Em Atendimento** na fila. Cada médico pode ter um único atendimento ativo.
+A senha de todas as contas é **alveris**. Clique em **Sair** entre os perfis.
+
+1. **Recepção → Pacientes.** Entre como **recepcao** e cadastre Ana Silva, 28 anos, CPF fictício **000.000.000-00**, telefone **(62) 00000-0000**, Rua Exemplo, 10, SUS. Repita o CPF para demonstrar o bloqueio. Busque Ana pelo nome ou CPF e edite o endereço. Depois busque Bruno e clique em **Ver histórico** para mostrar consultas atendidas e uma cancelada, com seu motivo.
+2. **Recepção → Novo agendamento.** Agende Ana com Dr. Carlos Mendes, amanhã às 14h. Tente marcar Bruno com Carlos no mesmo horário e depois tente marcar Ana com Dra. Marina no mesmo horário. Os dois conflitos são bloqueados. Em **Gestão da agenda**, mostre as próximas consultas e os exemplos do mês seguinte.
+3. **Recepção → Fila de espera.** Na consulta confirmada de Bruno com Carlos, clique em **Confirmar chegada**. Na fila, mostre a posição e o tempo de espera. Clique em **Chamar / Encaminhar**. Para facilitar o ensaio, é possível registrar a chegada antes da data simulada.
+4. **Área Médica → Prontuário.** Entre como **carlos** e inicie o atendimento de Bruno em **Minha fila**. Abra o prontuário e consulte o histórico. Tente finalizar sem preencher o diagnóstico. Em **Atividade da conta**, confira o erro com o nome de Bruno. Volte ao prontuário, preencha o diagnóstico, adicione um item fictício à prescrição e finalize. Confira que o histórico clínico sai da tela ao encerrar a consulta.
+5. **Portal do Paciente.** Entre como **bruno**. Em **Meus agendamentos**, confira os próximos horários e os atendimentos anteriores. Em **Minhas prescrições**, pesquise por médico, medicamento ou data, filtre por período e abra **Ver detalhes** para consultar o diagnóstico. Entre como **lia** para demonstrar que cada conta vê seu próprio histórico.
+6. **Recepção → Atividade da conta.** Volte como **recepcao** e mostre as entradas, saídas e ações administrativas. Em **Pacientes → Bruno → Ver histórico**, confirme que o atendimento recém-finalizado aparece como **Atendido**.
 
 ## Escopo e continuidade
 
-- Dia 1 · Cadastro, agendamento, portal de consulta, fila e início do atendimento.
-- Dia 2 · Prontuário, histórico, prescrição, finalização e manutenção da agenda. O atendimento iniciado no Dia 1 já fica vinculado ao agendamento para a próxima etapa.
-- Dia 3 · Perfis, prescrições no portal e demais cards após receber os critérios completos.
+- **Recepção** gerencia pacientes, próximos horários e fila. O histórico administrativo aparece ao selecionar um paciente. Cancelar preserva o registro e o motivo.
+- **Área Médica** registra o atendimento e consulta o histórico clínico apenas enquanto estiver atendendo aquele paciente. As prescrições são liberadas no portal após a finalização.
+- **Portal do Paciente** exibe dados, agendamentos, histórico e prescrições da própria conta, em modo de leitura.
+- **Acesso e armazenamento** são demonstrados no navegador, com dados fictícios e sessão de cinco minutos de inatividade. O protótipo funciona sem servidor ou banco de dados.
